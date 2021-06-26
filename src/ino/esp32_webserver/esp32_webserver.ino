@@ -5,13 +5,13 @@
  * @author Mateus Lima
  */
 
-#include <ESP8266WiFi.h>
 #define MEGA_TX 13
 #define MEGA_RX 15
 
+#include <ESP8266WiFi.h>
 #include<SoftwareSerial.h>
 
-SoftwareSerial arduinoSerial(MEGA_TX,MEGA_RX);
+SoftwareSerial ArduinoSerial(MEGA_TX,MEGA_RX);
 
 // Enter your wifi network name and Wifi Password
 const char* ssid = "WifiName";
@@ -19,19 +19,17 @@ const char* password = "Password";
 
 WiFiServer server(80);
 
-String header;
-
 unsigned long currentTime = millis();
 unsigned long previousTime = 0;
 const long timeoutTime = 2000; // ms
 
 // These variables store current output state of LED
-String outputRedState = "off";
+String state_outputA = "off";
 String outputGreenState = "off";
 String outputYellowState = "off";
 
 void setup() {
-  arduinoSerial.begin(9600);
+  ArduinoSerial.begin(9600);
   Serial.begin(115200);
 
   // Connect to Wi-Fi network with SSID and password
@@ -51,6 +49,7 @@ void setup() {
 }
 
 void loop() {
+  String header;
   WiFiClient client = server.available(); // Listen for incoming clients
 
   if (client) { // If a new client connects,
@@ -80,28 +79,28 @@ void loop() {
             // turns the GPIOs on and off
             if (header.indexOf("GET /2/on") >= 0) {
               Serial.println("Led vermelho esta ligado");
-              outputRedState = "on";
-              arduinoSerial.write( "A" );
+              state_outputA = "on";
+              ArduinoSerial.write( "A" );
             } else if (header.indexOf("GET /2/off") >= 0) {
               Serial.println("Led vermelho esta desligado");
-              outputRedState = "off";
-              arduinoSerial.write( "a" );
+              state_outputA = "off";
+              ArduinoSerial.write( "a" );
             } else if (header.indexOf("GET /4/on") >= 0) {
               Serial.println("Led verde esta ligado");
               outputGreenState = "on";
-              arduinoSerial.write( "B" );
+              ArduinoSerial.write( "B" );
             } else if (header.indexOf("GET /4/off") >= 0) {
               Serial.println("Led verde esta desligado");
               outputGreenState = "off";
-              arduinoSerial.write( "b" );
+              ArduinoSerial.write( "b" );
             } else if (header.indexOf("GET /5/on") >= 0) {
               Serial.println("Led amarelo esta ligado");
               outputYellowState = "on";
-              arduinoSerial.write( "C" );
+              ArduinoSerial.write( "C" );
             } else if (header.indexOf("GET /5/off") >= 0) {
               Serial.println("Led amarelo esta ligado");
               outputYellowState = "off";
-              arduinoSerial.write( "c" );
+              ArduinoSerial.write( "c" );
             }
 
             // Display the HTML web page
@@ -123,12 +122,12 @@ void loop() {
             client.println("<body><h1>SmartStudio</h1>");
 
             // Display current state, and ON/OFF buttons for GPIO 2 Red LED
-            client.println("<p>Red LED is " + outputRedState + "</p>");
-            // If the outputRedState is off, it displays the OFF button
-            if (outputRedState == "off") {
-              client.println("<p><a href=\"/2/on\"><button class=\"button buttonOff\">OFF</button></a></p>");
+            client.println("<p>Port A is " + state_outputA + "</p>");
+            // If the state_outputA is off, it displays the OFF button
+            if (state_outputA == "off") {
+              client.println("<p><a href=\"/2/on\"><button class=\"button buttonRed\">OFF</button></a></p>");
             } else {
-              client.println("<p><a href=\"/2/off\"><button class=\"button buttonRed\">ON</button></a></p>");
+              client.println("<p><a href=\"/2/off\"><button class=\"button buttonGreen\">ON</button></a></p>");
             }
 
             // Display current state, and ON/OFF buttons for GPIO 4 Green LED

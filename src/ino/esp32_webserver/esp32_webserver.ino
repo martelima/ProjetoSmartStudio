@@ -23,7 +23,7 @@ void loop() {
   char arduinoCommand = '*';
   char arduinoState = '*';
 
-  // Read ESP Commands  
+  // Read Serial Send commands to Arduino
   if (Serial.available() > 0) {
     arduinoCommand  = Serial.read();
 

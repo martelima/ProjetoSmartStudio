@@ -21,12 +21,19 @@ void setup() {
 void loop() {
 
   char arduinoCommand = '*';
+  char arduinoState = '*';
 
   // Read ESP Commands  
   if (Serial.available() > 0) {
     arduinoCommand  = Serial.read();
 
     arduinoSerial.write( arduinoCommand );
-    Serial.write( arduinoCommand );
+  }
+
+  // Print Arduino Response
+  if (arduinoSerial.available() > 0) {
+    arduinoState  = arduinoSerial.read();
+
+    Serial.write( arduinoState );
   }
 }

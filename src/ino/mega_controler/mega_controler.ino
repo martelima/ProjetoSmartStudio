@@ -1,44 +1,38 @@
 /**
-   Controlador dos dipo
-*/
+ *  Controler
+ *  @version 0.1
+ */
 
-#define BUFFER_SIZE
+#define RELAY_OFF 255
+#define RELAY_ON 0
 
 enum Relay
 {
-  Relay_PORT_A = 5,
+  Relay_PORT_A = 3,
   Relay_PORT_B = 4,
-  Relay_PORT_C = 3,
+  Relay_PORT_C = 5,
 };
 
 int state = 0;
 
 void setup() {
-  // put your setup code here, to run once:
 
   // ESP Comunication
   Serial.begin(9600);
-
-  digitalWrite( 13, 1 );
   
-  digitalWrite( Relay_PORT_A, LOW );
-  digitalWrite( Relay_PORT_B, LOW );
-  digitalWrite( Relay_PORT_C, LOW );
-
-  delay(500);
-  digitalWrite( 13, LOW );
-
-  digitalWrite( Relay_PORT_A, HIGH );
-  digitalWrite( Relay_PORT_B, HIGH );
-  digitalWrite( Relay_PORT_C, HIGH );
+  // Turn All ports OFF
+  analogWrite( Relay_PORT_A, RELAY_OFF );
+  analogWrite( Relay_PORT_B, RELAY_OFF );
+  analogWrite( Relay_PORT_C, RELAY_OFF );
 }
 
 void loop() {
 
-  // Read ESP Commands
   char espCommand = '*';
+
+  // Read ESP Commands  
   if (Serial.available() > 0) {
-    espCommand  = Serial.read();
+    espCommand  = Serial3.read();
     Serial.write( espCommand );
   }
 
@@ -53,44 +47,41 @@ void loop() {
 void controlRelayPorts( char command )
 {
 
-  const char portOFF = 255;
-  const char portON = 0;
-
   switch( command )
   {
     case 'a':
     {
-      analogWrite( Relay_PORT_A, portOFF );
+      analogWrite( Relay_PORT_A, RELAY_OFF );
       break;
     }
 
     case 'b':
     {
-      analogWrite( Relay_PORT_B, portOFF );
+      analogWrite( Relay_PORT_B, RELAY_OFF );
       break;
     }
 
     case 'c':
     {
-      analogWrite( Relay_PORT_C, portOFF );
+      analogWrite( Relay_PORT_C, RELAY_OFF );
       break;
     }
 
     case 'A':
     {
-      analogWrite( Relay_PORT_A, portON );
+      analogWrite( Relay_PORT_A, RELAY_ON );
       break;
     }
 
     case 'B':
     {
-      analogWrite( Relay_PORT_B, portON );
+      analogWrite( Relay_PORT_B, RELAY_ON );
       break;
     }
 
     case 'C':
     {
-      analogWrite( Relay_PORT_C, portON );
+      analogWrite( Relay_PORT_C, RELAY_ON );
       break;
     }
   }
